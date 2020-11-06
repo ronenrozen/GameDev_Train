@@ -11,7 +11,6 @@ public class MainCharacterMovement : MonoBehaviour
     CharacterController cController;
     AudioSource audioSource;
     Animator animator;
-    NavMeshAgent navigationAgent;
 
     // Start is called before the first frame update
     void Start()
@@ -21,7 +20,6 @@ public class MainCharacterMovement : MonoBehaviour
         cController = GetComponent<CharacterController>();
         audioSource = GetComponent<AudioSource>();
         animator = GetComponent<Animator>();
-        navigationAgent = GetComponent<NavMeshAgent>();
     }
 
   

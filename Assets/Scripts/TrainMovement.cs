@@ -24,10 +24,13 @@ public class TrainMovement : MonoBehaviour
 
     void Start()
     {
+
         train1NavMeshAgent = GetComponent<NavMeshAgent>();
         //animator = GetComponent<Animator>();
         characterController = GetComponent<CharacterController>();
         train1NavMeshAgent.Warp(transform.position);
+
+
         if (train1NavMeshAgent == null)
             Debug.Log("No NavMeshAgent or target assigned to " + this.name);
         else
@@ -45,12 +48,34 @@ public class TrainMovement : MonoBehaviour
         }
     }
 
+    private void RotateTowards(Transform target)
+    {
+        Vector3 direction = (target.position - transform.position).normalized;
+        Quaternion lookRotation = Quaternion.LookRotation(direction);
+        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 1.6f);
+    }
+
     private void SetDetination()
     {
         waitTimer = 0f;
+        RotateTowards(patrolPoints[currentPatrolIndex].transform);
+        //if (train1NavMeshAgent.velocity.sqrMagnitude > Mathf.Epsilon)
+        //{
+        //    transform.rotation = Quaternion.LookRotation(train1NavMeshAgent.velocity.normalized);
+        //}
+        //animator.SetFloat("Speed", 0f);
+        waitTimer += Time.deltaTime;
+
+        if (waitTimer >= totalWaitTime)
+        {
+
+            ChangePatrolPoint();
+            SetDetination();
+        }
         if (patrolPoints != null)
         {
            Vector3 targetVector = patrolPoints[currentPatrolIndex].transform.position;
+           //transform.LookAt(targetVector);
            train1NavMeshAgent.SetDestination(targetVector);
         }
     }
@@ -67,6 +92,10 @@ public class TrainMovement : MonoBehaviour
         }
         else
         {
+            if (train1NavMeshAgent.velocity.sqrMagnitude > Mathf.Epsilon)
+            {
+                transform.rotation = Quaternion.LookRotation(train1NavMeshAgent.velocity.normalized);
+            }
             //animator.SetFloat("Speed", 0f);
             waitTimer += Time.deltaTime;
 
@@ -76,9 +105,6 @@ public class TrainMovement : MonoBehaviour
                 ChangePatrolPoint();
                 SetDetination();
             }
-
-            //ChangePatrolPoint();
-            //SetDetination();
         }
     }
 

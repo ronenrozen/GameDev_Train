@@ -58,24 +58,29 @@ public class NPCMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        navigateAgent.SetDestination(patrolPoints[currentPatrolIndex].transform.position);
+        //navigateAgent.SetDestination(patrolPoints[currentPatrolIndex].transform.position);
         if (navigateAgent.remainingDistance > 0)
         {
             waitTimer = 0f;
-            float animationSpeed = patrolPoints[currentPatrolIndex].CompareTag("Character") ? 1.5f : 0.6f;
+            float animationSpeed = 1f;
             animator.SetFloat("Speed", animationSpeed);
         }
         else
         {
+            ChangePatrolPoint();
             animator.SetFloat("Speed", 0f);
-            waitTimer += Time.deltaTime;
+            GetComponent<NavMeshAgent>().enabled = false;
+            GetComponent<NPCScript>().enabled = true;
+            GetComponent<NPCMovement>().enabled = false;
+            
+            //waitTimer += Time.deltaTime;
 
-            if (waitTimer >= totalWaitTime)
-            {
+            //if (waitTimer >= totalWaitTime)
+            //{
 
-                ChangePatrolPoint();
-                SetDetination();
-            }
+            //    ChangePatrolPoint();
+            //    SetDetination();
+            //}
 
             //ChangePatrolPoint();
             //SetDetination();
@@ -84,13 +89,7 @@ public class NPCMovement : MonoBehaviour
 
     private void ChangePatrolPoint()
     {
-        currentPatrolIndex = UnityEngine.Random.Range(0, patrolPoints.Count);
-    }
-
-    private void OnCollisionStay(Collision collision)
-    {
-        navigateAgent.Move(Vector3.left * 2);
-        
+        currentPatrolIndex = (currentPatrolIndex + 1) % patrolPoints.Count;
     }
 
 }
